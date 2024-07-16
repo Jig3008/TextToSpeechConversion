@@ -1,0 +1,34 @@
+# Program to convert text to speech
+
+!pip install ibm_watson
+
+from ibm_watson import TextToSpeechV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+
+apiKey = 'Your API Key here'
+url = 'Your url here'
+
+#Authenticate the details for the combination
+authenticator = IAMAuthenticator(apiKey)
+tts = TextToSpeechV1(authenticator=authenticator)
+tts.set_service_url(url)
+
+#Convert a passed string into an audio file
+with open('speech.mp3','wb') as audio_File:
+    res = tts.synthesize('Hello World!', accept='audio/mp3', voice='en-US_AllisonV3Voice').get_result()
+    audio_File.write(res.content)
+
+#Read the file into a text variable
+with open('Coco.txt','r') as file:
+  text = file.readlines()
+
+#Do some text cleanup
+text = [line.replace('\n','') for line in text]
+text = [line.replace('.',' ') for line in text]
+
+text = ''.join(str(line) for line in text)
+
+#Convert a passed text into an audio file
+with open('CocoVoice.mp3','wb') as audio_File:
+    res = tts.synthesize(text, accept='audio/mp3', voice='en-US_AllisonV3Voice').get_result()
+    audio_File.write(res.content)
